@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>DNA 염기 서열 추론하기</title>
+  <style>
+    body { font-family: 'Arial', sans-serif; line-height: 1.8; padding: 30px; background: #f4f4f4; }
+    h1, h2 { color: #333; }
+    #problem-box, #result, #timer { margin-top: 20px; padding: 15px; background: white; border: 1px solid #ccc; border-radius: 5px; }
+    select, button, input { margin-top: 10px; padding: 8px; }
+    .seq { font-family: monospace; font-size: 18px; }
+    #popup { display: none; position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%); background: #fff; border: 2px solid #333; padding: 20px; z-index: 9999; text-align: center; }
+  </style>
+</head>
+<body>
+
+  <h1>1. 타이틀: DNA 염기 서열 추론하기</h1>
+  <h2>2. 대상 및 교과: 고1 (통합과학1)</h2>
+
+  <h3>3. 지문:</h3>
+  <p>비비는 어떤 생물의 DNA 조각을 분석하고 있다. DNA는 이중 나선 구조이며, 각 염기는 상보적인 염기와 결합한다.</p>
+
+  <h3>4. 규칙:</h3>
+  <ul>
+    <li>규칙1: A ↔ T</li>
+    <li>규칙2: G ↔ C</li>
+  </ul>
+
+  <h3>5. 문제:</h3>
+  <div id="problem-box">
+    문제를 생성하려면 아래 설정을 완료하고 [문제 풀기] 버튼을 누르세요.
+  </div>
+
+  <h3>6. 보기:</h3>
+  <label>염기 서열의 수: 
+    <select id="length-select">
+      <option value="8">8</option>
+      <option value="10">10</option>
+      <option value="12">12</option>
+      <option value="15">15</option>
+      <option value="20">20</option>
+    </select>
+  </label>
+  <br>
+  <label>시간 설정:
+    <select id="time-select">
+      <option value="30">30초</option>
+      <option value="60">1분</option>
+      <option value="90">1분 30초</option>
+      <option value="120">2분</option>
+    </select>
+  </label>
+  <br>
+  <button onclick="startProblem()">문제 풀기</button>
+
+  <div id="timer"></div>
+  <div id="result"></div>
+
+  <div id="popup">
+    <h2>⏰ 시간이 종료되었습니다!</h2>
+    <button onclick="restart()">다시 도전</button>
+  </div>
+
+  <script>
+    const basePair = { 'A': 'T', 'T': 'A', 'G': 'C', 'C': 'G' };
+    let timerInterval;
+
+    function randomBase() {
+      const bases = ['A', 'T', 'G', 'C'];
+      return bases[Math.floor(Math.random() * bases.length)];
+    }
+
+    function generateDNA(length) {
+      let top = '';
+      let bottom = '';
+      for (let i = 0; i < length; i++) {
+        const base = randomBase();
+        top += base;
+        bottom += basePair[base];
+      }
+      return { top, bottom };
+    }
+
+    function maskRandom(seq, maskCount = 3) {
+      let indices = [];
+      while (indices.length < maskCount) {
+        let idx = Math.floor(Math.random() * seq.length);
+        if (!indices.includes(idx)) indices.push(idx);
+      }
+      let masked = '';
+      for (let i = 0; i < seq.length; i++) {
+        masked += indices.includes(i) ? '?' : seq[i];
+      }
+      return masked;
+    }
+
+    function startTimer(seconds) {
+      clearInterval(timerInterval);
+      const timerDisplay = document.getElementById('timer');
+      let remaining = seconds;
+
+      timerDisplay.textContent = `남은 시간: ${remaining}초`;
+
+      timerInterval = setInterval(() => {
+        remaining--;
+        timerDisplay.textContent = `남은 시간: ${remaining}초`;
+        if (remaining <= 0) {
+          clearInterval(timerInterval);
+          document.getElementById('popup').style.display = 'block';
+        }
+      }, 1000);
+    }
+
+    function startProblem() {
+      document.getElementById('popup').style.display = 'none';
+      const length = parseInt(document.getElementById('length-select').value);
+      const time = parseInt(document.getElementById('time-select').value);
+
+      const { top, bottom } = generateDNA(length);
+
+      const maskedTop = maskRandom(top);
+      const maskedBottom = maskRandom(bottom);
+
+      document.getElementById('problem-box').innerHTML = `
+        <div class="seq">5′– ${maskedTop} –3′</div>
+        <div class="seq">3′– ${maskedBottom} –5′</div>
+      `;
+
+      startTimer(time);
+    }
+
+    function restart() {
+      document.getElementById('popup').style.display = 'none';
+      document.getElementById('result').innerHTML = '';
+      startProblem();
+    }
+  </script>
+
+</body>
+</html>
