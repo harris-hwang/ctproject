@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>빛의 3원색을 이용한 빛의 색 찾기</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+    }
+    h1, h2 {
+      color: #2c3e50;
+    }
+    .section {
+      margin-bottom: 20px;
+    }
+    .problem-box {
+      border: 2px solid #3498db;
+      padding: 15px;
+      background: #ecf0f1;
+      border-radius: 10px;
+    }
+    label {
+      margin-right: 10px;
+    }
+    input[type="number"] {
+      width: 70px;
+      margin-right: 20px;
+    }
+    #result {
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>타이틀: 빛의 3원색을 이용한 빛의 색 찾기</h1>
+  <h2>대상 및 교과: 중1 과학</h2>
+
+  <div class="section">
+    <h3>지문</h3>
+    <p>
+      우리가 보는 모든 빛의 색은 빨강, 초록, 파랑의 세 가지 빛이 혼합되어 만들어집니다. 
+      이 세 가지 색을 다양한 비율로 조합하면 흰색, 노란색, 보라색 등 다양한 색을 만들 수 있습니다.
+    </p>
+  </div>
+
+  <div class="section">
+    <h3>규칙</h3>
+    <ul>
+      <li>빨강 + 초록 = 노랑</li>
+      <li>빨강 + 파랑 = 자홍색</li>
+      <li>초록 + 파랑 = 청록색</li>
+      <li>빨강 + 초록 + 파랑 = 흰색</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h3>문제</h3>
+    <div class="problem-box">
+      아래 보기에서 빛의 3원색 값을 0~255 범위로 입력하고, 어떤 색이 만들어지는지 확인해보세요.
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>보기</h3>
+    <label for="red">빨간색</label>
+    <input type="number" id="red" min="0" max="255" value="0">
+
+    <label for="green">초록색</label>
+    <input type="number" id="green" min="0" max="255" value="0">
+
+    <label for="blue">파란색</label>
+    <input type="number" id="blue" min="0" max="255" value="0">
+
+    <button onclick="solve()">문제 풀기</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    function solve() {
+      const red = parseInt(document.getElementById('red').value);
+      const green = parseInt(document.getElementById('green').value);
+      const blue = parseInt(document.getElementById('blue').value);
+
+      if (
+        isNaN(red) || isNaN(green) || isNaN(blue) ||
+        red < 0 || red > 255 ||
+        green < 0 || green > 255 ||
+        blue < 0 || blue > 255
+      ) {
+        document.getElementById('result').innerText = '입력값은 0에서 255 사이여야 합니다.';
+        return;
+      }
+
+      let result = '';
+      if (red === 255 && green === 255 && blue === 255) {
+        result = '흰색';
+      } else if (red === 255 && green === 255 && blue === 0) {
+        result = '노란색';
+      } else if (red === 255 && green === 0 && blue === 255) {
+        result = '자홍색';
+      } else if (red === 0 && green === 255 && blue === 255) {
+        result = '청록색';
+      } else if (red === 255 && green === 0 && blue === 0) {
+        result = '빨간색';
+      } else if (red === 0 && green === 255 && blue === 0) {
+        result = '초록색';
+      } else if (red === 0 && green === 0 && blue === 255) {
+        result = '파란색';
+      } else if (red === 0 && green === 0 && blue === 0) {
+        result = '검정색 (빛 없음)';
+      } else {
+        result = `혼합 색상 (RGB: ${red}, ${green}, ${blue})`;
+      }
+
+      document.getElementById('result').innerText = `결과: ${result}`;
+    }
+  </script>
+
+</body>
+</html>

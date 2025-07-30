@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>타이틀: 역학적 에너지의 보존</title>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
+    h1, h2 { color: #2c3e50; }
+    .box { border: 1px solid #ccc; padding: 15px; margin-top: 10px; background: #f9f9f9; }
+    label, select, input { margin-top: 10px; display: block; }
+    .result { margin-top: 15px; padding: 10px; border: 1px dashed #444; }
+  </style>
+</head>
+<body>
+
+  <h1>타이틀: 역학적 에너지의 보존</h1>
+  <h2>대상 및 교과: 중3 과학</h2>
+
+  <div class="box">
+    <h3>지문</h3>
+    <p>공을 위로 던지거나 떨어뜨리는 상황에서 역학적 에너지가 보존되는 것을 확인할 수 있습니다. 위치에너지는 높이에 비례하며, 운동에너지는 속력에 비례합니다.</p>
+  </div>
+
+  <div class="box">
+    <h3>규칙</h3>
+    <ul>
+      <li>위치 에너지 = m × g × h (단, m = 1kg, g = 10 m/s²로 가정)</li>
+      <li>운동 에너지 = ½ × m × v² (m = 1kg)</li>
+      <li>역학적 에너지 = 위치 에너지 + 운동 에너지</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <h3>문제</h3>
+    <p>공이 어떤 높이에서 정지 상태로 시작하여 떨어질 때, 특정 시점의 속력과 위치 에너지를 통해 역학적 에너지가 보존되는지를 확인해보세요.</p>
+  </div>
+
+  <div class="box">
+    <h3>보기 (초기 설정)</h3>
+    <label>높이 (m):
+      <select id="height">
+        <option value="10">10m</option>
+        <option value="8">8m</option>
+        <option value="5">5m</option>
+        <option value="3">3m</option>
+        <option value="0">0m</option>
+      </select>
+    </label>
+
+    <label>속력 (m/s):
+      <select id="velocity">
+        <option value="0">0 (정지)</option>
+        <option value="2">2</option>
+        <option value="4">4</option>
+        <option value="6">6</option>
+        <option value="8">8</option>
+        <option value="10">10</option>
+      </select>
+    </label>
+
+    <button onclick="showAnswerInput()">문제 풀기</button>
+
+    <div id="answerSection" style="display:none;">
+      <label>예상 역학적 에너지 (J): <input type="number" id="userAnswer" /></label>
+      <button onclick="checkAnswer()">정답 입력</button>
+    </div>
+
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    function showAnswerInput() {
+      document.getElementById('answerSection').style.display = 'block';
+      document.getElementById('result').innerHTML = '';
+    }
+
+    function checkAnswer() {
+      const h = parseFloat(document.getElementById('height').value);
+      const v = parseFloat(document.getElementById('velocity').value);
+      const userAnswer = parseFloat(document.getElementById('userAnswer').value);
+
+      const g = 10; // 중력가속도
+      const m = 1;  // 질량 1kg
+
+      const potentialEnergy = m * g * h;
+      const kineticEnergy = 0.5 * m * v * v;
+      const mechanicalEnergy = potentialEnergy + kineticEnergy;
+
+      const resultText = `
+        <strong>계산 결과</strong><br>
+        - 위치 에너지: ${potentialEnergy.toFixed(2)} J<br>
+        - 운동 에너지: ${kineticEnergy.toFixed(2)} J<br>
+        - 역학적 에너지: ${mechanicalEnergy.toFixed(2)} J<br><br>
+        ${Math.abs(userAnswer - mechanicalEnergy) < 0.1 ? "✅ 정답입니다!" : "❌ 오답입니다. 다시 시도해 보세요."}
+      `;
+
+      document.getElementById('result').innerHTML = resultText;
+    }
+  </script>
+
+</body>
+</html>

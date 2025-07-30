@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>식물 잎의 개수 구하기</title>
+  <style>
+    body { font-family: 'Arial', sans-serif; line-height: 1.8; padding: 30px; background: #f4f4f4; }
+    h1, h2 { color: #333; }
+    #problem-box, #result, #timer { margin-top: 20px; padding: 15px; background: white; border: 1px solid #ccc; border-radius: 5px; }
+    select, button, input { margin-top: 10px; padding: 8px; }
+    .seq { font-family: monospace; font-size: 18px; }
+    #popup { display: none; position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%); background: #fff; border: 2px solid #333; padding: 20px; z-index: 9999; text-align: center; }
+  </style>
+</head>
+<body>
+
+  <h1>1. 타이틀: 식물 잎의 개수 구하기</h1>
+  <h2>2. 대상 및 교과: 중1 (과학)</h2>
+
+  <h3>3. 지문:</h3>
+  <p>보통의 식물은 다음과 같은 규칙에 따라 잎이 만들어집니다.</p>
+
+  <h3>4. 규칙:</h3>
+  <ul>
+    <li>규칙: 1 1 2 3 5 8 13 (피보나치 수열)</li>
+    <li><img src="./image1.jpeg" alt="규칙 설명 이미지" width="300"></li>
+  </ul>
+
+  <h3>5. 문제:</h3>
+  <div id="problem-box">
+    문제를 생성하려면 아래 설정을 완료하고 [문제 풀기] 버튼을 누르세요.
+  </div>
+
+  <h3>6. 보기:</h3>
+  <label>식물 잎의 개수:
+    <select id="length-select">
+      <option value="10">10</option>
+      <option value="12">12</option>
+      <option value="15">15</option>
+      <option value="20">20</option>
+    </select>
+  </label>
+  <br>
+  <label>시간 설정:
+    <select id="time-select">
+      <option value="30">30초</option>
+      <option value="60">1분</option>
+      <option value="90">1분 30초</option>
+      <option value="120">2분</option>
+    </select>
+  </label>
+  <br>
+  <button onclick="startProblem()">문제 풀기</button>
+
+  <div id="timer"></div>
+  <div id="result"></div>
+
+  <div id="popup">
+    <h2>⏰ 시간이 종료되었습니다!</h2>
+    <button onclick="restart()">다시 도전</button>
+  </div>
+
+  <script>
+    let timerInterval;
+    let correctAnswer = 0;
+
+    function fibonacciSum(n) {
+      let a = 1, b = 1, sum = 2;
+      if (n === 1) return 1;
+      if (n === 2) return 2;
+      for (let i = 3; i <= n; i++) {
+        const next = a + b;
+        sum += next;
+        a = b;
+        b = next;
+      }
+      return sum;
+    }
+
+    function startTimer(seconds) {
+      clearInterval(timerInterval);
+      const timerDisplay = document.getElementById('timer');
+      let remaining = seconds;
+
+      timerDisplay.textContent = `남은 시간: ${remaining}초`;
+
+      timerInterval = setInterval(() => {
+        remaining--;
+        timerDisplay.textContent = `남은 시간: ${remaining}초`;
+        if (remaining <= 0) {
+          clearInterval(timerInterval);
+          document.getElementById('popup').style.display = 'block';
+        }
+      }, 1000);
+    }
+
+    function startProblem() {
+      document.getElementById('popup').style.display = 'none';
+      document.getElementById('result').innerHTML = '';
+
+      const length = parseInt(document.getElementById('length-select').value);
+      const time = parseInt(document.getElementById('time-select').value);
+      correctAnswer = fibonacciSum(length);
+
+      const question = `${length}번째까지 식물 잎의 개수의 총합은 얼마일까요?`;
+
+      document.getElementById('problem-box').innerHTML = `
+        <strong>문제:</strong> ${question}
+        <br><br>
+        <label>정답 입력: <input type="number" id="user-answer" placeholder="숫자를 입력하세요"></label>
+        <button onclick="checkAnswer()">정답 확인</button>
+      `;
+
+      startTimer(time);
+    }
+
+    function checkAnswer() {
+      const userInput = parseInt(document.getElementById('user-answer').value);
+      if (isNaN(userInput)) {
+        document.getElementById('result').innerText = "숫자를 입력해주세요.";
+        return;
+      }
+
+      if (userInput === correctAnswer) {
+        document.getElementById('result').innerHTML = `<span style="color:green;">정답입니다! 🎉 (${correctAnswer})</span>`;
+      } else {
+        document.getElementById('result').innerHTML = `<span style="color:red;">틀렸습니다. 😢 정답은 ${correctAnswer}입니다.</span>`;
+      }
+    }
+
+    function restart() {
+      document.getElementById('popup').style.display = 'none';
+      document.getElementById('result').innerHTML = '';
+      startProblem();
+    }
+  </script>
+
+</body>
+</html>
