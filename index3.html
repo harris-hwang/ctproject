@@ -23,14 +23,22 @@
     label {
       margin-right: 10px;
     }
-    input[type="number"] {
-      width: 70px;
+    input[type="number"],
+    input[type="text"] {
+      width: 100px;
       margin-right: 20px;
     }
-    #result {
+    #result, #ai-result {
       margin-top: 15px;
       font-weight: bold;
       font-size: 1.2em;
+    }
+    #color-display {
+      width: 150px;
+      height: 150px;
+      margin-top: 15px;
+      border: 2px solid #333;
+      border-radius: 10px;
     }
   </style>
 </head>
@@ -75,12 +83,65 @@
     <label for="blue">파란색</label>
     <input type="number" id="blue" min="0" max="255" value="0">
 
+    <br><br>
+    <label for="answer">정답 입력</label>
+    <input type="text" id="answer" placeholder="예: 흰색">
+
     <button onclick="solve()">문제 풀기</button>
-    <div id="result"></div>
+    <div id="result">결과 대기 중...</div>
+  </div>
+
+  <div class="section">
+    <button onclick="askAI()">AI에게 물어보기</button>
+    <div id="ai-result">AI 결과 대기 중...</div>
+    <div id="color-display"></div>
   </div>
 
   <script>
     function solve() {
+      document.getElementById('result').innerText = '결과를 확인 중입니다... (5초 후 표시됩니다)';
+      
+      setTimeout(() => {
+        const red = parseInt(document.getElementById('red').value);
+        const green = parseInt(document.getElementById('green').value);
+        const blue = parseInt(document.getElementById('blue').value);
+
+        if (
+          isNaN(red) || isNaN(green) || isNaN(blue) ||
+          red < 0 || red > 255 ||
+          green < 0 || green > 255 ||
+          blue < 0 || blue > 255
+        ) {
+          document.getElementById('result').innerText = '입력값은 0에서 255 사이여야 합니다.';
+          return;
+        }
+
+        let result = '';
+        if (red === 255 && green === 255 && blue === 255) {
+          result = '흰색';
+        } else if (red === 255 && green === 255 && blue === 0) {
+          result = '노란색';
+        } else if (red === 255 && green === 0 && blue === 255) {
+          result = '자홍색';
+        } else if (red === 0 && green === 255 && blue === 255) {
+          result = '청록색';
+        } else if (red === 255 && green === 0 && blue === 0) {
+          result = '빨간색';
+        } else if (red === 0 && green === 255 && blue === 0) {
+          result = '초록색';
+        } else if (red === 0 && green === 0 && blue === 255) {
+          result = '파란색';
+        } else if (red === 0 && green === 0 && blue === 0) {
+          result = '검정색 (빛 없음)';
+        } else {
+          result = `혼합 색상 (RGB: ${red}, ${green}, ${blue})`;
+        }
+
+        document.getElementById('result').innerText = `결과: ${result}`;
+      }, 5000);
+    }
+
+    function askAI() {
       const red = parseInt(document.getElementById('red').value);
       const green = parseInt(document.getElementById('green').value);
       const blue = parseInt(document.getElementById('blue').value);
@@ -91,32 +152,36 @@
         green < 0 || green > 255 ||
         blue < 0 || blue > 255
       ) {
-        document.getElementById('result').innerText = '입력값은 0에서 255 사이여야 합니다.';
+        document.getElementById('ai-result').innerText = '입력값은 0~255 사이여야 합니다.';
         return;
       }
 
-      let result = '';
-      if (red === 255 && green === 255 && blue === 255) {
-        result = '흰색';
-      } else if (red === 255 && green === 255 && blue === 0) {
-        result = '노란색';
-      } else if (red === 255 && green === 0 && blue === 255) {
-        result = '자홍색';
-      } else if (red === 0 && green === 255 && blue === 255) {
-        result = '청록색';
-      } else if (red === 255 && green === 0 && blue === 0) {
-        result = '빨간색';
-      } else if (red === 0 && green === 255 && blue === 0) {
-        result = '초록색';
-      } else if (red === 0 && green === 0 && blue === 255) {
-        result = '파란색';
-      } else if (red === 0 && green === 0 && blue === 0) {
-        result = '검정색 (빛 없음)';
+      // AI 추정 색 이름 간단 로직 (모형)
+      let aiColorName = '';
+      if (red > 200 && green > 200 && blue < 100) {
+        aiColorName = '노란색';
+      } else if (red > 200 && blue > 200 && green < 100) {
+        aiColorName = '자홍색';
+      } else if (green > 200 && blue > 200 && red < 100) {
+        aiColorName = '청록색';
+      } else if (red > 200 && green < 100 && blue < 100) {
+        aiColorName = '빨간색';
+      } else if (green > 200 && red < 100 && blue < 100) {
+        aiColorName = '초록색';
+      } else if (blue > 200 && red < 100 && green < 100) {
+        aiColorName = '파란색';
+      } else if (red < 50 && green < 50 && blue < 50) {
+        aiColorName = '검정색';
+      } else if (red > 200 && green > 200 && blue > 200) {
+        aiColorName = '흰색';
       } else {
-        result = `혼합 색상 (RGB: ${red}, ${green}, ${blue})`;
+        aiColorName = `혼합된 색상 (RGB: ${red}, ${green}, ${blue})`;
       }
 
-      document.getElementById('result').innerText = `결과: ${result}`;
+      document.getElementById('ai-result').innerText = `AI 예측 결과: ${aiColorName}`;
+
+      // 색상 박스에 색 반영
+      document.getElementById('color-display').style.backgroundColor = `rgb(${red}, ${green}, ${blue})`;
     }
   </script>
 
